@@ -1,0 +1,5 @@
+export const getAirlinesType = 'get/airline'
+export const getAirlineByIdType = 'getById/airline'
+export const postAirlineType = 'post/airline'
+export const putAirlineType = 'put/airline'
+export const deleteAirlineType = 'delete/airline'

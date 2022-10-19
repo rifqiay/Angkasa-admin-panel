@@ -1,0 +1,5 @@
+export const getTicketsType = 'get/ticket'
+export const getTicketByIdType = 'getById/ticket'
+export const postTicketType = 'post/ticket'
+export const putTicketType = 'put/ticket'
+export const deleteTicketType = 'delete/ticket'
