@@ -42,14 +42,15 @@ const App = () => {
                     ))}
                     <Route path='*' element={
                         <Fragment>
-                            <DialogBox
-                                ref={lostPageDialogRef}
-                                isDialogOpen={true}
-                                onDialogClose={() => alert('You can\'t close these notification, just leave this page.')}
-                                status={500}
-                                message='Page not found'
-                            />
-                            <Overlay opacity={0.8} gradient={`${theme.mode === 'dark' ? 'linear-gradient(105deg, #343A40 1%, #7048E8 60%, #343A40 95%)' : 'linear-gradient(105deg, #fff 1%, #7048E8 60%, #fff 95%)'}`} zIndex={-1} />
+                            <Overlay opacity={0.8} gradient={`${theme.colorScheme === 'dark' ? 'linear-gradient(105deg, #343A40 1%, #7048E8 60%, #343A40 95%)' : 'linear-gradient(90deg, rgba(255,48,48,0.6671043417366946) 0%, rgba(29,176,253,0.7371323529411764) 33%, rgba(250,224,126,0.6727065826330532) 90%)'}`} zIndex={-1}>
+                                <DialogBox
+                                    ref={lostPageDialogRef}
+                                    isDialogOpen={true}
+                                    onDialogClose={() => alert('You can\'t close these notification, just leave this page.')}
+                                    status={500}
+                                    message='Page not found'
+                                />
+                            </Overlay>
                         </Fragment>
                     } />
                 </Routes>
