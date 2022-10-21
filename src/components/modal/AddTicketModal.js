@@ -3,9 +3,12 @@ import { shallowEqual, useDidUpdate } from '@mantine/hooks'
 import { forwardRef, Fragment, memo, useEffect, useState } from 'react'
 import { ErrorMessage, withFormik } from 'formik'
 import { useSelector, shallowEqual as shallowEqualRedux, useDispatch } from 'react-redux'
-import DateTimePicker from 'react-datetime-picker'
+import { createTheme, WuiProvider } from '@welcome-ui/core'
+import { DateTimePicker } from '@welcome-ui/date-time-picker'
 import { Country, State } from 'country-state-city'
 import { getAirlinesActionCreator } from '../../redux/action/creator/airline'
+
+const theme = createTheme()
 
 const forwardedRefSelectComponent = forwardRef
 const SelectAirline = forwardedRefSelectComponent(({ image, label, description, ...others }, ref) => (
@@ -68,7 +71,7 @@ const CustomAddTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.country_from}
                     onChange={(value) => setFieldValue('country_from', value, false)}
-                    data={Country.getAllCountries().map(value => ({
+                    data={(Country.getAllCountries() || []).map(value => ({
                         value: value.isoCode.toString(),
                         label: value.name
                     }))}
@@ -80,7 +83,7 @@ const CustomAddTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.country_to}
                     onChange={(value) => setFieldValue('country_to', value, false)}
-                    data={Country.getAllCountries().map(value => ({
+                    data={(Country.getAllCountries() || []).map(value => ({
                         value: value.isoCode.toString(),
                         label: value.name
                     }))}
@@ -92,7 +95,7 @@ const CustomAddTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.place_from}
                     onChange={(value) => setFieldValue('place_from', value, false)}
-                    data={State.getStatesOfCountry(values.country_from).map(value => ({
+                    data={(State.getStatesOfCountry(values.country_from) || []).map(value => ({
                         value: value.name.toString(),
                         label: value.name
                     }))}
@@ -104,7 +107,7 @@ const CustomAddTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.place_to}
                     onChange={(value) => setFieldValue('place_to', value, false)}
-                    data={State.getStatesOfCountry(values.country_to).map(value => ({
+                    data={(State.getStatesOfCountry(values.country_to) || []).map(value => ({
                         value: value.name.toString(),
                         label: value.name
                     }))}
@@ -115,7 +118,9 @@ const CustomAddTicketModalWithFormikProps = ({
                     label='Departure'
                     description='Please enter ticket departure'
                     style={{ width: '100%' }}>
-                    <DateTimePicker onChange={setDeparture} value={departure} disabled={post?.isPending} />
+                    <WuiProvider theme={theme}>
+                        <DateTimePicker onChange={date => setDeparture(new Date(date))} value={departure} disabled={post?.isPending} />
+                    </WuiProvider>
                 </InputWrapper>
                 <InputWrapper
                     id='ticket-arival-id'
@@ -123,7 +128,9 @@ const CustomAddTicketModalWithFormikProps = ({
                     label='Arival'
                     description='Please enter ticket arival'
                     style={{ width: '100%' }}>
-                    <DateTimePicker onChange={setArival} value={arival} disabled={post?.isPending} />
+                    <WuiProvider theme={theme}>
+                        <DateTimePicker onChange={date => setArival(new Date(date))} value={arival} disabled={post?.isPending} />
+                    </WuiProvider>
                 </InputWrapper>
                 <InputWrapper
                     id='ticket-transit-id'
@@ -184,7 +191,7 @@ const CustomAddTicketModalWithFormikProps = ({
                     itemComponent={SelectAirline}
                     data={(airlines || []).map(value => ({
                         value: value.id.toString(),
-                        label: value.name,
+                        label: value.title,
                         image: value.thumbnail,
                         description: value.airport
                     }))}

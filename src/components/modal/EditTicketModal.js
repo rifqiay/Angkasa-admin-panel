@@ -3,20 +3,23 @@ import { shallowEqual, useDidUpdate } from '@mantine/hooks'
 import { forwardRef, Fragment, memo, useEffect, useState } from 'react'
 import { ErrorMessage, withFormik } from 'formik'
 import { useSelector, shallowEqual as shallowEqualRedux, useDispatch } from 'react-redux'
-import DateTimePicker from 'react-datetime-picker'
+import { createTheme, WuiProvider } from '@welcome-ui/core'
+import { DateTimePicker } from '@welcome-ui/date-time-picker'
 import { Country, State } from 'country-state-city'
 import { getAirlinesActionCreator } from '../../redux/action/creator/airline'
 
+const theme = createTheme()
+
 const forwardedRefSelectComponent = forwardRef
-const SelectAirline = forwardedRefSelectComponent(({ image, label, description, ...others }, ref) => (
-    <div ref={ref} {...others}>
+const SelectAirline = forwardedRefSelectComponent((props, ref) => (
+    <div ref={ref} {...props}>
         <Group noWrap>
-            <Avatar src={image} />
+            <Avatar src={props?.image} />
 
             <div>
-                <Text size="sm">{label}</Text>
+                <Text size="sm">{props?.label}</Text>
                 <Text size="xs" color="dimmed">
-                    From airport: {description}
+                    From airport: {props?.description}
                 </Text>
             </div>
         </Group>
@@ -36,7 +39,7 @@ const CustomEditTicketModalWithFormikProps = ({
     const [arival, setArival] = useState(new Date())
     const dispatch = useDispatch()
 
-    useDidUpdate(() => setFieldValue('departure', arival, false), [departure])
+    useDidUpdate(() => setFieldValue('departure', departure, false), [departure])
     useDidUpdate(() => setFieldValue('arival', arival, false), [arival])
 
     useEffect(() => dispatch(getAirlinesActionCreator()), [])
@@ -68,9 +71,9 @@ const CustomEditTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.country_from}
                     onChange={(value) => setFieldValue('country_from', value, false)}
-                    data={Country.getAllCountries().map(value => ({
-                        value: value.isoCode.toString(),
-                        label: value.name
+                    data={(Country.getAllCountries() || []).map(value => ({
+                        value: value?.isoCode?.toString(),
+                        label: value?.name
                     }))}
                 />
                 <Select
@@ -80,9 +83,9 @@ const CustomEditTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.country_to}
                     onChange={(value) => setFieldValue('country_to', value, false)}
-                    data={Country.getAllCountries().map(value => ({
-                        value: value.isoCode.toString(),
-                        label: value.name
+                    data={(Country.getAllCountries() || []).map(value => ({
+                        value: value?.isoCode?.toString(),
+                        label: value?.name
                     }))}
                 />
                 <Select
@@ -92,9 +95,9 @@ const CustomEditTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.place_from}
                     onChange={(value) => setFieldValue('place_from', value, false)}
-                    data={State.getStatesOfCountry(values.country_from || 'ID').map(value => ({
-                        value: value.name.toString(),
-                        label: value.name
+                    data={(State.getStatesOfCountry(values.country_from) || []).map(value => ({
+                        value: value?.name?.toString(),
+                        label: value?.name
                     }))}
                 />
                 <Select
@@ -104,9 +107,9 @@ const CustomEditTicketModalWithFormikProps = ({
                     nothingFound='No options'
                     value={values.place_to}
                     onChange={(value) => setFieldValue('place_to', value, false)}
-                    data={State.getStatesOfCountry(values.country_to || 'AS').map(value => ({
-                        value: value.name.toString(),
-                        label: value.name
+                    data={(State.getStatesOfCountry(values.country_to) || []).map(value => ({
+                        value: value?.name?.toString(),
+                        label: value?.name
                     }))}
                 />
                 <InputWrapper
@@ -115,7 +118,9 @@ const CustomEditTicketModalWithFormikProps = ({
                     label='Departure'
                     description='Please enter ticket departure'
                     style={{ width: '100%' }}>
-                    <DateTimePicker onChange={setDeparture} value={values?.departure || departure} disabled={put?.isPending} />
+                    <WuiProvider theme={theme}>
+                        <DateTimePicker onChange={date => setDeparture(new Date(date))} value={new Date(values?.departure) || departure} disabled={put?.isPending} />
+                    </WuiProvider>
                 </InputWrapper>
                 <InputWrapper
                     id='ticket-arival-id'
@@ -123,7 +128,9 @@ const CustomEditTicketModalWithFormikProps = ({
                     label='Arival'
                     description='Please enter ticket arival'
                     style={{ width: '100%' }}>
-                    <DateTimePicker onChange={setArival} value={values?.arival || arival} disabled={put?.isPending} />
+                    <WuiProvider theme={theme}>
+                        <DateTimePicker onChange={date => setArival(new Date(date))} value={new Date(values?.arival) || arival} disabled={put?.isPending} />
+                    </WuiProvider>
                 </InputWrapper>
                 <Select
                     label='Choose Type'
@@ -146,7 +153,7 @@ const CustomEditTicketModalWithFormikProps = ({
                     value={values.trip}
                     onChange={(value) => setFieldValue('trip', value, false)}
                     data={[
-                        { value: 'ONEWAY', label: 'One' },
+                        { value: 'ONEWAY', label: 'One Way' },
                         { value: 'ROUNDTRIP', label: 'Round Trip' }
                     ]}
                 />
@@ -220,10 +227,10 @@ const CustomEditTicketModalWithFormikProps = ({
                     onChange={(value) => setFieldValue('airlineId', value, false)}
                     itemComponent={SelectAirline}
                     data={(airlines || []).map(value => ({
-                        value: value.id.toString(),
-                        label: value.title,
-                        image: value.thumbnail,
-                        description: value.airport
+                        value: value?.id.toString(),
+                        label: value?.title,
+                        image: value?.thumbnail,
+                        description: value?.airport
                     }))}
                 />
                 <Button
@@ -278,7 +285,7 @@ const CustomEditTicketModalWithFormik = withFormik({
 
         props.callback({
             id: props?.ticket?.id,
-            value: data
+            data: data
         })
         setSubmitting(false)
     },

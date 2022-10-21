@@ -33,14 +33,14 @@ const Ticket = () => {
         },
         {
             Header: 'Departure',
-            accessor: 'departure',
             id: 'Departure',
+            Cell: (props) => moment(props?.row?.original?.departure).locale(zoneName).format('LT'),
             Footer: 'Departure'
         },
         {
             Header: 'Arival',
-            accessor: 'arival',
             id: 'Arival',
+            Cell: (props) => moment(props?.row?.original?.arival).locale(zoneName).format('LT'),
             Footer: 'Arival'
         },
         {
@@ -219,8 +219,6 @@ const Ticket = () => {
                         ...value.airline,
                         title: decode(value.airline.title)
                     },
-                    departure: moment(value.departure).locale(zoneName).format('LT'),
-                    arival: moment(value.arival).locale(zoneName).format('LT'),
                     created_at: moment(value.created_at).locale(zoneName).format('LLLL'),
                     updated_at: moment(value.updated_at).locale(zoneName).format('LLLL')
                 })))

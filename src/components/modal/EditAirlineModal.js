@@ -150,7 +150,7 @@ const CustomEditAirlineModalWithFormik = withFormik({
 
         props.callback({
             id: props?.airline?.id,
-            value: createFormData(values?.single, data)
+            data: createFormData(values?.single, data)
         })
         setSubmitting(false)
     },

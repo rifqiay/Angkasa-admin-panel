@@ -54,7 +54,7 @@ axiosInstance.interceptors.response.use(
             (error?.response?.data.data.message === 'jwt expired' || error?.response?.data?.data?.message === 'Refresh token unavailable' || error?.response?.data?.data?.message === 'Refresh token must be conditioned')
         ) {
             localStorage.clear()
-            history.replace('/home')
+            history.replace('/auth/signin')
 
             return Promise.reject()
         }
